@@ -1,0 +1,53 @@
+---
+title: "lab3_whitney_willoz"
+author: "Whitney Willoz"
+date: "9/27/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Lab 3
+1) Find the average years of education for the respondents with each marital status. Arrange your output in a meaningful order and print. Describe any patterns you find.
+
+Answer:
+
+```{r}
+
+```
+
+2)Create a single data frame containing records for the better educated respondents with each marital status. A “better educated” respondent is someone who has strictly more years of education than the average among those with the same marital status. Print the structure of the data frame.
+
+Answer:
+
+```{r}
+
+```
+
+For each of the investigation below, create at least one numerical summary and one appropriate visualization. Write a paragraph to describe your findings and the variables you used.
+
+3)How is the happiness of a respondent related to his/her marriage status? Define that a person is happy if the response to question is “Very happy” or “Pretty happy”.
+
+Answer:
+
+```{r}
+
+```
+
+4)Does party affiliation affect the relationship you found in the last question?
+
+Answer:
+
+```{r}
+
+```
+
+5)How is marital status related to the education of a respondent? What are possible reasons accounting for the patterns you see?
+
+Answer: 
+
+```{r}
+
+```

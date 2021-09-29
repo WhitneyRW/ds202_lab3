@@ -10,20 +10,38 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 ## Lab 3
+
+```{r}
+install.packages('readxl')
+dat <- readxl::read_xls('C:\Users\wrwil\OneDrive\Documents\202rFiles\extract1.tar/GSS.xls')
+library(ggplot2)
+library(dplyr)
+```
+
+
 1) Find the average years of education for the respondents with each marital status. Arrange your output in a meaningful order and print. Describe any patterns you find.
 
 Answer:
 
 ```{r}
+singleAvgEdu <- dat %>% 
+  select(marStatus, edu) %>% 
+  filter(marStatus == "Single") %>% 
+  mean(edu)
+singleAvgEdu
 
+marriedAvgEdu <- dat %>% 
+  select(marStatus, edu) %>% 
+  filter(marStatus == "Single") %>% 
+  mean(edu)
+marriedAvgEdu
 ```
 
 2)Create a single data frame containing records for the better educated respondents with each marital status. A “better educated” respondent is someone who has strictly more years of education than the average among those with the same marital status. Print the structure of the data frame.
 
-Answer:
-
 ```{r}
-
+btrEdu <- dat %>%
+  filter()
 ```
 
 For each of the investigation below, create at least one numerical summary and one appropriate visualization. Write a paragraph to describe your findings and the variables you used.
@@ -33,6 +51,10 @@ For each of the investigation below, create at least one numerical summary and o
 Answer:
 
 ```{r}
+happyRating <- dat %>%
+  select(happiness, marStatus) 
+happinessBar <- ggplot(happyRating, aes(marStatus, fill = happiness) ) + geom_bar()
+happinessBar
 
 ```
 
@@ -49,5 +71,17 @@ Answer:
 Answer: 
 
 ```{r}
+singleAvgEdu <- dat %>% 
+  select(marStatus, edu) %>% 
+  filter(marStatus == "Single") %>% 
+  mean(edu)
+singleAvgEdu
 
+marriedAvgEdu <- dat %>% 
+  select(marStatus, edu) %>% 
+  filter(marStatus == "Single") %>% 
+  mean(edu)
+marriedAvgEdu
+
+ggplot(dat, aes()) + geom_boxplot()
 ```

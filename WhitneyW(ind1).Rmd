@@ -12,76 +12,100 @@ knitr::opts_chunk$set(echo = TRUE)
 ## Lab 3
 
 ```{r}
-install.packages('readxl')
-dat <- readxl::read_xls('C:\Users\wrwil\OneDrive\Documents\202rFiles\extract1.tar/GSS.xls')
+dat1 <- readxl::read_xls('GSS.xls')
 library(ggplot2)
 library(dplyr)
+
+dat <- dat1 %>%
+  rename(Year = `Gss year for this respondent`, Happy = `General happiness`,
+         relig = `Rs religious preference`, party = `Political party affiliation`,
+         gender = `Respondents sex`, edu = `Highest year of school completed`,
+         marStatus = `Marital status`, hoursWrk = `Number of hours usually work a week`, id = `Respondent id number`, Ballot = `Ballot used for interview`) 
+
 ```
 
 
 1) Find the average years of education for the respondents with each marital status. Arrange your output in a meaningful order and print. Describe any patterns you find.
 
-Answer:
+Answer:The highest average for years of education comes from Never married at 13.4 and lowest average is widowed at 11.2 years.
 
 ```{r}
-singleAvgEdu <- dat %>% 
-  select(marStatus, edu) %>% 
-  filter(marStatus == "Single") %>% 
-  mean(edu)
-singleAvgEdu
-
-marriedAvgEdu <- dat %>% 
-  select(marStatus, edu) %>% 
-  filter(marStatus == "Single") %>% 
-  mean(edu)
-marriedAvgEdu
+MarriageAvgEdu <- dat %>% 
+  filter(nchar(edu) < 3) %>% 
+  na.omit(edu, marStatus) %>% 
+  group_by(marStatus)%>%
+  summarize(edu_mean = mean(as.numeric(edu), na.rm=TRUE)) 
+MarriageAvgEdu
 ```
 
 2)Create a single data frame containing records for the better educated respondents with each marital status. A “better educated” respondent is someone who has strictly more years of education than the average among those with the same marital status. Print the structure of the data frame.
 
 ```{r}
 btrEdu <- dat %>%
-  filter()
+  filter((marStatus == "Never married" & edu > 13.4)|
+        (marStatus == "Married" & edu > 13)|
+        (marStatus == "Divorced" & edu > 13.1)|
+        (marStatus == "Widowed" & edu > 11.2)|
+        (marStatus== "Separated" & edu > 11.9))
+str(btrEdu)
 ```
 
 For each of the investigation below, create at least one numerical summary and one appropriate visualization. Write a paragraph to describe your findings and the variables you used.
 
 3)How is the happiness of a respondent related to his/her marriage status? Define that a person is happy if the response to question is “Very happy” or “Pretty happy”.
 
-Answer:
+Answer: Overall there are more married people who are happy than all other categories. Never being married also has a higher proportion.On average Married people are happy 70% of the time. 
 
 ```{r}
-happyRating <- dat %>%
-  select(happiness, marStatus) 
-happinessBar <- ggplot(happyRating, aes(marStatus, fill = happiness) ) + geom_bar()
-happinessBar
+dat$happy1 <- 
+  case_when(
+    dat$Happy %in% c('Pretty happy', 'Very happy') ~ 'Happy',
+    dat$Happy == 'Not too happy' ~ 'Sad',
+    TRUE ~ 'Unknown'
+  )
+table(dat$happy1)
+
+dat$happy2 <- 
+  case_when(
+    dat$Happy %in% c('Pretty happy', 'Very happy') ~ 1,
+    dat$Happy == 'Not too happy' ~ -1,
+    TRUE ~ 0
+  )
+meanHappytoMar <- dat %>%
+  group_by(marStatus)%>%
+  summarize(happy_avg = mean(happy2))
+meanHappytoMar
+
+ggplot(dat, aes(marStatus, fill = happy1)) + geom_bar()
 
 ```
 
 4)Does party affiliation affect the relationship you found in the last question?
 
-Answer:
+Answer:Overall, married not strong democrats and republicans are overall the happiest or the highest in volume.Next would be married Strong democrats or independents.
 
 ```{r}
-
+meanHappywParty <- dat %>%
+  group_by(marStatus, party)%>%
+  summarize(happy_avg = mean(happy2))
+meanHappywParty
+ggplot(dat, aes(marStatus, fill=happy1)) + geom_bar() + coord_flip() + facet_wrap(~party)
 ```
 
-5)How is marital status related to the education of a respondent? What are possible reasons accounting for the patterns you see?
+5)How is religion related to education? 
 
-Answer: 
+Answer: People who practice hinduism have the highest average of years of education followed by jewish.
 
 ```{r}
-singleAvgEdu <- dat %>% 
-  select(marStatus, edu) %>% 
-  filter(marStatus == "Single") %>% 
-  mean(edu)
-singleAvgEdu
+avgEduByRelig <- dat %>%
+  group_by(relig) %>%
+  filter(nchar(edu) < 3)%>%
+  summarize(edu_mean = mean(as.numeric(edu), na.rm = TRUE))
+avgEduByRelig
 
-marriedAvgEdu <- dat %>% 
-  select(marStatus, edu) %>% 
-  filter(marStatus == "Single") %>% 
-  mean(edu)
-marriedAvgEdu
-
-ggplot(dat, aes()) + geom_boxplot()
+ dat %>%
+  group_by(relig) %>%
+  filter(nchar(edu) < 3)%>%
+  summarize(edu_mean = mean(as.numeric(edu), na.rm = TRUE)) %>% 
+  ggplot(aes(relig,edu_mean)) + geom_bar(stat = 'identity') + coord_flip()
 ```
